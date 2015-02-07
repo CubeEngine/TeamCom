@@ -23,20 +23,23 @@
 package de.cubeisland.teamcom.query;
 
 import de.cubeisland.teamcom.query.command.*;
+import de.cubeisland.teamcom.query.exception.FileTransferException;
+import de.cubeisland.teamcom.query.exception.NetworkingException;
+import de.cubeisland.teamcom.query.exception.TeamComException;
 import de.cubeisland.teamcom.query.value.EventMode;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.cubeisland.teamcom.query.QueryConnectionBuilder.NO_DEFAULT_VIRTUAL_SERVER;
 import static de.cubeisland.teamcom.query.property.ClientProperty.CLIENT_NICKNAME;
 import static de.cubeisland.teamcom.query.value.EventMode.CHANNEL;
 import static de.cubeisland.teamcom.query.Response.parseLine;
+import static java.lang.Integer.parseInt;
 
 /**
  * JTS3ServerQuery
@@ -48,10 +51,10 @@ public class QueryConnection implements Closeable
 
     private final InetAddress address;
     private final int queryPort;
+    private final int fileTransferPort;
 
     private final String username;
     private final String password;
-    private final String displayName;
     private final int defaultVirtualServer;
     private final Integer timeout;
 
@@ -68,13 +71,15 @@ public class QueryConnection implements Closeable
 
     private QueryCurrent queryCurrent;
 
-    public QueryConnection(InetAddress address, int queryPort, String username, String password, String displayName, int defaultVirtualServer, Integer timeout)
+    private final AtomicInteger downloadCounter = new AtomicInteger(0);
+
+    public QueryConnection(InetAddress address, int queryPort, int fileTransferPort, String username, String password, int defaultVirtualServer, Integer timeout)
     {
         this.address = address;
         this.queryPort = queryPort;
+        this.fileTransferPort = fileTransferPort;
         this.username = username;
         this.password = password;
-        this.displayName = displayName;
         this.defaultVirtualServer = defaultVirtualServer;
         this.timeout = timeout;
     }
@@ -95,7 +100,7 @@ public class QueryConnection implements Closeable
     {
         for (Map<String, String> permInfo : this.build(PermissionList.class).execute().asMapList())
         {
-            if (Integer.parseInt(permInfo.get("permid")) == permID)
+            if (parseInt(permInfo.get("permid")) == permID)
             {
                 return new Permission(permID, permInfo.get("permname"), permInfo.get("permdesc"));
             }
@@ -180,6 +185,16 @@ public class QueryConnection implements Closeable
             }
 
             socketQuery.setSoTimeout(timeout);
+
+
+            if (username != null)
+            {
+                build(Login.class).with(username, password).execute();
+            }
+            if (defaultVirtualServer != NO_DEFAULT_VIRTUAL_SERVER)
+            {
+                build(Use.class).serverId(defaultVirtualServer).execute();
+            }
         }
         catch (IOException e)
         {
@@ -197,10 +212,10 @@ public class QueryConnection implements Closeable
     public void updateCurrent() throws TeamComException
     {
         Map<String, String> map = build(WhoAmI.class).execute().asMap();
-        this.queryCurrent = new QueryCurrent(Integer.parseInt(map.get("client_id")),
-                         Integer.parseInt(map.get("virtualserver_id")),
-                         Integer.parseInt(map.get("client_channel_id")), null,
-                         Integer.parseInt(map.get("client_database_id")));
+        this.queryCurrent = new QueryCurrent(parseInt(map.get("client_id")),
+                         parseInt(map.get("virtualserver_id")),
+                         parseInt(map.get("client_channel_id")), null,
+                         parseInt(map.get("client_database_id")));
     }
 
     public <T extends Command> T build(Class<T> clazz)
@@ -498,6 +513,64 @@ public class QueryConnection implements Closeable
         return true;
     }
 
+    public FileTransfer downloadIcon(long id) throws TeamComException
+    {
+        return downloadFile("/icon_" + id, 0, null);
+    }
+
+    public FileTransfer downloadFile(String path, int channel, String channelPassword) throws TeamComException
+    {
+        try
+        {
+            downloadCounter.compareAndSet(0xFFFF, 0);
+            System.out.println("Getting icon #" + path);
+            final Command c = build(FtInitDownload.class).init(downloadCounter.getAndIncrement(), path, channel, channelPassword, 0);
+            Map<String, String> parsedResponse = c.execute().asMap();
+            String ftkey = parsedResponse.get("ftkey");
+            if (ftkey != null)
+            {
+                final Socket socket = new Socket(address, fileTransferPort);
+                socket.getOutputStream().write((ftkey + "\n").getBytes("ASCII"));
+                socket.setSoTimeout(2000);
+
+                return new FileTransfer(socket.getInputStream(), parseInt(parsedResponse.get("size")));
+            }
+            else
+            {
+                throw new FileTransferException("File transfer initialization did not return a key");
+            }
+        }
+        catch (IOException e)
+        {
+            throw new NetworkingException(e.getMessage(), e);
+        }
+    }
+
+    public static final class FileTransfer implements Closeable
+    {
+        private final InputStream stream;
+        private final int size;
+
+        public FileTransfer(InputStream stream, int size)
+        {
+            this.stream = stream;
+            this.size = size;
+        }
+
+        public InputStream getStream()
+        {
+            return stream;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        public void close() throws IOException
+        {
+            this.stream.close();
+        }
+    }
 
     public static class QueryCurrent
     {

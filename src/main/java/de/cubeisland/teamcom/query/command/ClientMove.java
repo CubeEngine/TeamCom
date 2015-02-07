@@ -23,7 +23,7 @@
 package de.cubeisland.teamcom.query.command;
 
 import de.cubeisland.teamcom.query.Command;
-import de.cubeisland.teamcom.query.TeamComException;
+import de.cubeisland.teamcom.query.exception.TeamComException;
 import de.cubeisland.teamcom.query.QueryConnection;
 
 /**

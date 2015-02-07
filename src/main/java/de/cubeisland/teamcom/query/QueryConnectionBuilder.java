@@ -35,14 +35,13 @@ public class QueryConnectionBuilder
 
     private String username;
     private String password;
-    private String displayName;
     private int defaultVirtualServer = NO_DEFAULT_VIRTUAL_SERVER;
     private Integer timeout = DEFAULT_TIMEOUT;
 
 
     public QueryConnection build()
     {
-        return new QueryConnection(address, queryPort, username, password, displayName, defaultVirtualServer, timeout);
+        return new QueryConnection(address, queryPort, fileTransferPort, username, password, defaultVirtualServer, timeout);
     }
 
     public QueryConnectionBuilder withAddress(InetAddress addr)
@@ -73,14 +72,12 @@ public class QueryConnectionBuilder
 
     public QueryConnectionBuilder withCredentials(String username, String password)
     {
+        if (username == null)
+        {
+            throw new IllegalArgumentException("Username must not be null!");
+        }
         this.username = username;
         this.password = password;
-        return this;
-    }
-
-    public QueryConnectionBuilder withDisplayName(String displayName)
-    {
-        this.displayName = displayName;
         return this;
     }
 

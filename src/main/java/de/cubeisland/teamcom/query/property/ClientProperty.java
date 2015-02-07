@@ -23,6 +23,7 @@
 package de.cubeisland.teamcom.query.property;
 
 import de.cubeisland.teamcom.query.Property;
+import de.cubeisland.teamcom.query.QueryConnectionBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +38,15 @@ public enum ClientProperty implements Property
     /**
      * Nickname of the client
      */
-    CLIENT_NICKNAME(true), // TODO displayName.length() < 3)
+    CLIENT_NICKNAME(true) {
+
+        private static final int MIN_LENGTH = 3;
+        @Override
+        public boolean accepts(Object value)
+        {
+            return value instanceof String && ((String) value).length() >= MIN_LENGTH;
+        }
+    },
 
     /**
      * Client version information including build number
@@ -292,6 +301,6 @@ public enum ClientProperty implements Property
 
     public boolean accepts(Object value)
     {
-        return true; // TODO
+        return true;
     }
 }

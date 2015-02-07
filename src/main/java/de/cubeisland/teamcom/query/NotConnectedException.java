@@ -22,6 +22,8 @@
  */
 package de.cubeisland.teamcom.query;
 
+import de.cubeisland.teamcom.query.exception.TeamComException;
+
 public class NotConnectedException extends TeamComException
 {
     public NotConnectedException()

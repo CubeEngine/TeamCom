@@ -50,7 +50,7 @@ public enum ChannelProperty implements Property
      */
     CHANNEL_FLAG_PASSWORD(false),
     /**
-     * Codec used by thechannel (see Definitions)
+     * Codec used by the channel (see Definitions)
      */
     CHANNEL___CODEC(true),
     // TODO
@@ -176,7 +176,7 @@ public enum ChannelProperty implements Property
 
     public boolean accepts(Object value)
     {
-        return true; // TODO
+        return true;
     }
 
     public String getName()

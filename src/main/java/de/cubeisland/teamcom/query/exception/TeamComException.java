@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.teamcom.query;
+package de.cubeisland.teamcom.query.exception;
 
 public class TeamComException extends Exception
 {

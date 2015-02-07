@@ -36,7 +36,7 @@ public class Login extends Command
     public Login with(String login, String pw)
     {
         this.setParam("client_login_name", login);
-        this.setParam("client_login_password", pw);
+        this.setParam("client_login_password", pw == null ? "" : pw);
         return this;
     }
     //Permissions:"b_serverquery_login"

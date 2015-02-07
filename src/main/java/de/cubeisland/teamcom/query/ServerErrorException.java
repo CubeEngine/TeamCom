@@ -22,6 +22,8 @@
  */
 package de.cubeisland.teamcom.query;
 
+import de.cubeisland.teamcom.query.exception.TeamComException;
+
 import java.util.Map;
 
 import static de.cubeisland.teamcom.util.StringUtils.decodeString;

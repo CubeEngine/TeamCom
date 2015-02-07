@@ -23,7 +23,7 @@
 package de.cubeisland.teamcom.query.command;
 
 import de.cubeisland.teamcom.query.Command;
-import de.cubeisland.teamcom.query.TeamComException;
+import de.cubeisland.teamcom.query.exception.TeamComException;
 
 /**
  * Initializes a file transfer download.
@@ -35,14 +35,13 @@ import de.cubeisland.teamcom.query.TeamComException;
  */
 public class FtInitDownload extends Command
 {
-    public FtInitDownload init(int clientFileTransferId, String filePath, int channelId, String channelPw,
-                               int seekpos) throws TeamComException
+    public FtInitDownload init(int transferId, String path, int channelId, String channelPassword, int seekOffset) throws TeamComException
     {
-        this.setParam("clientftfid", clientFileTransferId);
-        this.setParam("name", filePath);
+        this.setParam("clientftfid", transferId);
+        this.setParam("name", path);
         this.setParam("cid", channelId);
-        this.setParam("cpw", channelPw);
-        this.setParam("seekpos", seekpos);
+        this.setParam("cpw", channelPassword);
+        this.setParam("seekpos", seekOffset);
         return this;
     }
     //Permissions:"i_ft_file_download_power i_ft_needed_file_download _power i_ft_quota_mb_download_per_client"

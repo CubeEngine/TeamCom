@@ -379,6 +379,6 @@ public enum VirtualServerProperty implements Property
 
     public boolean accepts(Object value)
     {
-        return true; // TODO
+        return true;
     }
 }

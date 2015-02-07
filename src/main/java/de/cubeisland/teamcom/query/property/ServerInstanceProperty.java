@@ -193,7 +193,7 @@ public enum ServerInstanceProperty implements Property
 
     public boolean accepts(Object value)
     {
-        return true; // TODO
+        return true;
     }
 
     public String getName()

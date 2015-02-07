@@ -69,7 +69,7 @@ public class Response
      *
      * @param line
      * @return
-     * @throws TeamComException
+     * @throws de.cubeisland.teamcom.query.exception.TeamComException
      */
     public static Map<String, String> parseLine(String line)
     {
