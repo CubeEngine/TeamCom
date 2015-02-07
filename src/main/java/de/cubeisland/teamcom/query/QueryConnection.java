@@ -23,10 +23,9 @@
 package de.cubeisland.teamcom.query;
 
 import de.cubeisland.teamcom.query.command.*;
-import de.cubeisland.teamcom.query.exception.FileTransferException;
-import de.cubeisland.teamcom.query.exception.NetworkingException;
-import de.cubeisland.teamcom.query.exception.TeamComException;
+import de.cubeisland.teamcom.query.exception.*;
 import de.cubeisland.teamcom.query.value.EventMode;
+import de.cubeisland.teamcom.util.StringUtils;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -142,7 +141,7 @@ public class QueryConnection implements Closeable
         catch (IOException e)
         {
             socketQuery = null;
-            throw new TeamComException("Exception while connecting", e);
+            throw new NetworkingException("Exception while connecting", e);
         }
         if (!socketQuery.isConnected())
         {
@@ -259,7 +258,7 @@ public class QueryConnection implements Closeable
             {
                 if (in.ready())
                 {
-                    handleAction(this.readIncomingLine());
+                    handleAction(readIncomingLine());
                 }
             }
             catch (IOException e)
@@ -389,13 +388,16 @@ public class QueryConnection implements Closeable
 
     public final synchronized String executeRawCommand(String command) throws TeamComException
     {
-        this.checkConnection();
-        queryInProcess = false;
+        ensureConnected();
+        this.queryInProcess = false;
         // log("> " + command);
         out.println(command);
         // Read Incoming...
-        this.checkConnection();
-        LinkedList<String> indata = new LinkedList<String>();
+        if (!isConnected())
+        {
+            throw new NotConnectedException();
+        }
+        LinkedList<String> lines = new LinkedList<String>();
         try
         {
             String read;
@@ -403,33 +405,26 @@ public class QueryConnection implements Closeable
             {
                 if (read.length() > 0 && (!read.startsWith("notify") || !handleAction(read)))
                 {
-                    indata.add(read);
+                    lines.add(read);
                     if (read.startsWith("error "))
                     {
                         break;
                     }
                 }
             }
-            if (indata.isEmpty())
+            if (lines.isEmpty())
             {
                 close();
                 throw new TeamComException("No Response, maybe connection to TS3 server got interrupted.");
             }
             // Creates a map with the parsed error id and message.
-            Map<String, String> map = parseLine(indata.getLast());
-            indata.removeLast();
+            Map<String, String> map = parseLine(lines.getLast());
+            lines.removeLast();
             if (!map.get("id").equals("0"))
             {
                 throw ServerErrorException.forResponse(map);
             }
-            StringBuilder sb = new StringBuilder();
-            String separator = "";
-            for (String data : indata)
-            {
-                sb.append(separator).append(data);
-                separator = "\n";
-            }
-            return sb.toString();
+            return StringUtils.explode(lines);
         }
         catch (IOException e)
         {
@@ -461,11 +456,11 @@ public class QueryConnection implements Closeable
         return socketQuery.isConnected();
     }
 
-    private void checkConnection() throws NotConnectedException
+    private void ensureConnected() throws TeamComException
     {
         if (!isConnected())
         {
-            throw new NotConnectedException();
+            this.connect();
         }
     }
 

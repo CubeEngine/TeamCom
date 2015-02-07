@@ -25,6 +25,7 @@ package de.cubeisland.teamcom.util;
 import de.cubeisland.teamcom.query.Value;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -144,5 +145,17 @@ public class StringUtils
         }
 
         return out.toString();
+    }
+
+    public static String explode(LinkedList<String> lines)
+    {
+        StringBuilder sb = new StringBuilder();
+        String separator = "";
+        for (String line : lines)
+        {
+            sb.append(separator).append(line);
+            separator = "\n";
+        }
+        return sb.toString();
     }
 }
