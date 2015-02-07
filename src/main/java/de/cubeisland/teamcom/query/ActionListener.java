@@ -30,7 +30,6 @@ import java.util.Map;
  * @author Stefan Martens
  * @see QueryConnection#setListener(ActionListener)
  * @see QueryConnection#removeListener()
- * @since 0.7
  */
 public interface ActionListener
 {

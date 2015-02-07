@@ -50,9 +50,9 @@ public class ClientMove extends Command
     protected String execute(QueryConnection query) throws TeamComException
     {
         String response = super.execute(query);
-        if (query.current().isClient(arguments.get("clid")))
+        if (query.getCurrent().isClient(arguments.get("clid")))
         {
-            query.current().updateChannel((Integer)arguments.get("cid"), (String)arguments.get("cpw"), query);
+            query.getCurrent().updateChannel((Integer)arguments.get("cid"), (String)arguments.get("cpw"), query);
         }
         return response;
     }

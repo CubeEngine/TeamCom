@@ -83,9 +83,18 @@ public class QueryConnection implements Closeable
         this.timeout = timeout;
     }
 
-    public QueryCurrent current()
+    public QueryCurrent getCurrent()
     {
         return queryCurrent;
+    }
+
+    public void updateCurrent() throws TeamComException
+    {
+        Map<String, String> map = build(WhoAmI.class).execute().asMap();
+        this.queryCurrent = new QueryCurrent(parseInt(map.get("client_id")),
+                parseInt(map.get("virtualserver_id")),
+                parseInt(map.get("client_channel_id")), null,
+                parseInt(map.get("client_database_id")));
     }
 
     /**
@@ -105,28 +114,6 @@ public class QueryConnection implements Closeable
             }
         }
         return null;
-    }
-
-    /**
-     * Change the display name on the Teamspeak 3 server of this query connection.
-     * <br>This name will be displayed on many actions like kickClient(), moveClient(), pokeClient() and sendTextMessage().
-     *
-     * @param displayName A String with the new display name of this connection.
-     */
-    public void setDisplayName(String displayName) throws TeamComException
-    {
-        if (displayName == null || displayName.length() < 3)
-        {
-            throw new IllegalArgumentException("DisplayName null or shorter than 3 characters!");
-        }
-        try
-        {
-            this.build(ClientUpdate.class).property(CLIENT_NICKNAME, displayName).execute();
-        }
-        catch (Exception e)
-        {
-            throw new TeamComException("Exception while setting displayname", e);
-        }
     }
 
     /**
@@ -206,15 +193,6 @@ public class QueryConnection implements Closeable
             throw new TeamComException("Error after connecting", e);
         }
         initNotifyTimer();
-    }
-
-    public void updateCurrent() throws TeamComException
-    {
-        Map<String, String> map = build(WhoAmI.class).execute().asMap();
-        this.queryCurrent = new QueryCurrent(parseInt(map.get("client_id")),
-                         parseInt(map.get("virtualserver_id")),
-                         parseInt(map.get("client_channel_id")), null,
-                         parseInt(map.get("client_database_id")));
     }
 
     public <T extends Command> T build(Class<T> clazz)
@@ -355,6 +333,13 @@ public class QueryConnection implements Closeable
      */
     public void close() throws IOException
     {
+        try
+        {
+            removeListener();
+        }
+        catch (TeamComException ignored)
+        {}
+
         if (eventNotifyTimerTask != null)
         {
             eventNotifyTimerTask.cancel();

@@ -51,7 +51,7 @@ public class SendTextmessage extends Command
     protected String execute(QueryConnection query) throws TeamComException
     {
         String result = null;
-        QueryCurrent current = query.current();
+        QueryCurrent current = query.getCurrent();
         switch ((TargetMode)this.arguments.get("targetmode"))
         {
         case CHANNEL:

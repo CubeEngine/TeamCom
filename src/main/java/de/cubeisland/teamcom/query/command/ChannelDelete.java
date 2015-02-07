@@ -48,7 +48,7 @@ public class ChannelDelete extends Command
     protected String execute(QueryConnection query) throws TeamComException
     {
         String response = super.execute(query);
-        if (query.current().isInChannel(this.arguments.get("cid")))
+        if (query.getCurrent().isInChannel(this.arguments.get("cid")))
         {
             query.updateCurrent();
         }
