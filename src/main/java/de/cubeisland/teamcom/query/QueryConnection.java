@@ -163,6 +163,11 @@ public class QueryConnection implements Closeable
                         first = false;
                         socketQuery.setSoTimeout(500);
                     }
+                    //Example banned: error id=3329 msg=connection\sfailed,\syou\sare\sbanned extra_msg=you\smay\sretry\sin\s354\sseconds\n\r
+                    if (read.contains("error id=3329"))
+                    {
+                        throw new TeamComException("You were banned for: " + read.substring(read.indexOf("in")).trim());
+                    }
                     // log("< " + read);
                 }
             }
@@ -511,7 +516,7 @@ public class QueryConnection implements Closeable
             {
                 final Socket socket = new Socket(address, fileTransferPort);
                 socket.getOutputStream().write((ftkey + "\n").getBytes("ASCII"));
-                socket.setSoTimeout(2000);
+                socket.setSoTimeout(10000);
 
                 return new FileTransfer(socket.getInputStream(), parseInt(parsedResponse.get("size")));
             }
