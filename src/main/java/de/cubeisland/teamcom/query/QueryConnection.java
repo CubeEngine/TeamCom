@@ -418,12 +418,6 @@ public class QueryConnection implements Closeable
         }
         catch (IOException e)
         {
-            try
-            {
-                close();
-            }
-            catch (IOException ignored)
-            {}
             throw new TeamComException("Connection to TS3 Server interrupted!", e);
         }
         finally
