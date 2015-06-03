@@ -404,7 +404,6 @@ public class QueryConnection implements Closeable
             }
             if (lines.isEmpty())
             {
-                close();
                 throw new TeamComException("No Response, maybe connection to TS3 server got interrupted.");
             }
             // Creates a map with the parsed error id and message.
