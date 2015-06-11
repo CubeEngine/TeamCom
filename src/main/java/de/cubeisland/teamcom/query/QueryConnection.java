@@ -338,21 +338,6 @@ public class QueryConnection implements Closeable
      */
     public void close() throws IOException
     {
-        try
-        {
-            removeListener();
-        }
-        catch (TeamComException ignored)
-        {}
-
-        if (eventNotifyTimerTask != null)
-        {
-            eventNotifyTimerTask.cancel();
-            eventNotifyTimerTask = null;
-            eventNotifyTimer.cancel();
-            eventNotifyTimer = null;
-        }
-
         queryCurrent = null;
 
         if (out != null)
@@ -373,6 +358,23 @@ public class QueryConnection implements Closeable
         {
             socketQuery.close();
             socketQuery = null;
+        }
+    }
+
+    public void stopListener()
+    {
+        try
+        {
+            removeListener();
+        }
+        catch (TeamComException ignored)
+        {}
+        if (eventNotifyTimerTask != null)
+        {
+            eventNotifyTimerTask.cancel();
+            eventNotifyTimerTask = null;
+            eventNotifyTimer.cancel();
+            eventNotifyTimer = null;
         }
     }
 
@@ -404,6 +406,7 @@ public class QueryConnection implements Closeable
             }
             if (lines.isEmpty())
             {
+                close();
                 throw new TeamComException("No Response, maybe connection to TS3 server got interrupted.");
             }
             // Creates a map with the parsed error id and message.
