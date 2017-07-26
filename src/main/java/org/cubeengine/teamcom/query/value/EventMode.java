@@ -39,11 +39,11 @@ public enum EventMode implements Value
      */
     TEXTPRIVATE,
     /**
-     * Server Join & Left
+     * Server Join &amp; Left
      */
     SERVER,
     /**
-     * Channel Join & Left
+     * Channel Join &amp; Left
      * This mode needs a channel ID.
      */
     CHANNEL;

@@ -155,12 +155,12 @@ public enum ServerInstanceProperty implements Property
     VIRTUALSERVERS_TOTAL_CHANNELS_ONLINE(false),
 
     /**
-     * Max number of commands allowed in <SERVERINSTANCE_SERVERQUERY_FLOOD_TIME> seconds
+     * Max number of commands allowed in &lt;SERVERINSTANCE_SERVERQUERY_FLOOD_TIME&gt; seconds
      */
     SERVERINSTANCE_SERVERQUERY_FLOOD_COMMANDS(true),
 
     /**
-     * Timeframe in seconds for < SERVERINSTANCE_SERVERQUERY_FLOOD_COMMANDS> commands
+     * Timeframe in seconds for &lt;SERVERINSTANCE_SERVERQUERY_FLOOD_COMMANDS&gt; commands
      */
     SERVERINSTANCE_SERVERQUERY_FLOOD_TIME(true),
 

@@ -120,6 +120,7 @@ public class QueryConnection implements Closeable
      *
      * @param permID A permission ID
      *
+     * @throws TeamComException if the command could not be executed
      * @return the permission or null if not found
      */
     public Permission getPermission(int permID) throws TeamComException
@@ -281,6 +282,8 @@ public class QueryConnection implements Closeable
 
     /**
      * Remove the class from receiving Teamspeak events. This function also call removeAllEvents(), if needed.
+     *
+     * @throws TeamComException if the underlying command could not be executed
      */
     public void removeListener() throws TeamComException
     {
@@ -295,6 +298,8 @@ public class QueryConnection implements Closeable
      *
      * @param eventMode Use an EVENT_MODE constant
      * @param channelID A channel ID, only needed for CHANNEL. Use any number for any other EVENT_MODE.
+     *
+     * @throws TeamComException of the underlying command could not be executed
      */
     public void addEventNotify(EventMode eventMode, int channelID) throws TeamComException
     {
@@ -332,6 +337,8 @@ public class QueryConnection implements Closeable
 
     /**
      * Removes all activated events.
+     *
+     * @throws TeamComException if the underlying command could not be executed
      */
     public void removeAllEvents() throws TeamComException
     {

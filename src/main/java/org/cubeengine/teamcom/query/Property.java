@@ -26,6 +26,8 @@ public interface Property
 {
     /**
      * Returns the property name
+     *
+     * @return the name of the property
      */
     String getName();
 
@@ -33,6 +35,7 @@ public interface Property
      * Returns true if the given value is allowed for this Property
      *
      * @param value the value to check
+     * @return true if the value is allowed
      */
     boolean accepts(Object value);
 }

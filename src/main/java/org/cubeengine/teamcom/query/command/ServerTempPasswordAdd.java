@@ -46,6 +46,10 @@ public class ServerTempPasswordAdd extends Command
 
     /**
      * Call after {@link #set}
+     *
+     * @param cid the channel id
+     * @param cpw the channel password to add
+     * @return fluent interface
      */
     public ServerTempPasswordAdd forChannel(int cid, String cpw)
     {

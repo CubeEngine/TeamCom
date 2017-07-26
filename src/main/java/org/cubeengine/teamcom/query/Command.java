@@ -83,8 +83,8 @@ public class Command
     }
 
     /**
-     * Binds a property with a value
-     * <br>As used in edit & create commands
+     * Binds a property with a value<br>
+     * As used in edit &amp; create commands
      *
      * @param property the property
      * @param value    the value
