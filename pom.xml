@@ -10,7 +10,7 @@
 
     <groupId>org.cubeengine</groupId>
     <artifactId>teamcom</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>TeamCom</name>
     <description>A Teamspeak 3 API</description>
@@ -28,7 +28,7 @@
         <url>https://github.com/CubeEngine/TeamCom</url>
         <connection>scm:git:https://github.com/CubeEngine/TeamCom</connection>
         <developerConnection>scm:git:git@github.com:CubeEngine/TeamCom</developerConnection>
-        <tag>HEAD</tag>
+        <tag>teamcom-1.0.0</tag>
     </scm>
 
     <distributionManagement>
