@@ -22,23 +22,41 @@
  */
 package org.cubeengine.teamcom.query;
 
-import org.cubeengine.teamcom.query.command.*;
-import org.cubeengine.teamcom.query.exception.*;
+import org.cubeengine.teamcom.query.command.ClientMove;
+import org.cubeengine.teamcom.query.command.FtInitDownload;
+import org.cubeengine.teamcom.query.command.Login;
+import org.cubeengine.teamcom.query.command.PermissionList;
+import org.cubeengine.teamcom.query.command.ServerNotifyRegister;
+import org.cubeengine.teamcom.query.command.ServerNotifyUnregister;
+import org.cubeengine.teamcom.query.command.Use;
+import org.cubeengine.teamcom.query.command.WhoAmI;
+import org.cubeengine.teamcom.query.exception.FileTransferException;
+import org.cubeengine.teamcom.query.exception.NetworkingException;
+import org.cubeengine.teamcom.query.exception.NotConnectedException;
+import org.cubeengine.teamcom.query.exception.ServerErrorException;
+import org.cubeengine.teamcom.query.exception.TeamComException;
 import org.cubeengine.teamcom.query.value.EventMode;
 import org.cubeengine.teamcom.util.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.cubeengine.teamcom.query.QueryConnectionBuilder.NO_DEFAULT_VIRTUAL_SERVER;
-import static org.cubeengine.teamcom.query.property.ClientProperty.CLIENT_NICKNAME;
-import static org.cubeengine.teamcom.query.value.EventMode.CHANNEL;
-import static org.cubeengine.teamcom.query.Response.parseLine;
 import static java.lang.Integer.parseInt;
+import static org.cubeengine.teamcom.query.QueryConnectionBuilder.NO_DEFAULT_VIRTUAL_SERVER;
+import static org.cubeengine.teamcom.query.Response.parseLine;
+import static org.cubeengine.teamcom.query.value.EventMode.CHANNEL;
 
 /**
  * JTS3ServerQuery

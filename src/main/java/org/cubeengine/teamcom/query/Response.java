@@ -66,10 +66,10 @@ public class Response
     }
 
     /**
+     * Parses a line into a String-String map.
      *
-     * @param line
-     * @return
-     * @throws de.cubeisland.teamcom.query.exception.TeamComException
+     * @param line line to parse
+     * @return the String-String map representing the input line
      */
     public static Map<String, String> parseLine(String line)
     {
